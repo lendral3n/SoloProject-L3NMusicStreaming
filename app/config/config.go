@@ -12,7 +12,9 @@ var (
 	JWT_SECRET string
 	RDS_URL string
 	CLD_URL    string
-	MID_KEY    string
+	AWS_ACCESS_KEY_ID string
+	AWS_SECRET_ACCESS_KEY string
+	AWS_REGION string
 )
 
 type AppConfig struct {
@@ -60,12 +62,20 @@ func ReadEnv() *AppConfig {
 		CLD_URL = val
 		isRead = false
 	}
-	if val, found := os.LookupEnv("MIDKEY"); found {
-		MID_KEY = val
+	if val, found := os.LookupEnv("RDSURL"); found {
+		RDS_URL = val
 		isRead = false
 	}
-	if val, found := os.LookupEnv("RDSURL"); found {
-		JWT_SECRET = val
+	if val, found := os.LookupEnv("AWSKEYID"); found {
+		AWS_ACCESS_KEY_ID = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("AWSSECRET"); found {
+		AWS_SECRET_ACCESS_KEY = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("AWSREGION"); found {
+		AWS_REGION = val
 		isRead = false
 	}
 
@@ -80,10 +90,12 @@ func ReadEnv() *AppConfig {
 			return nil
 		}
 
+		AWS_ACCESS_KEY_ID = viper.GetString("AWSKEY")
+		AWS_SECRET_ACCESS_KEY = viper.GetString("AWSSECRET")
+		AWS_REGION = viper.GetString("AWSREGION")
 		CLD_URL = viper.GetString("CLDURL")
 		RDS_URL = viper.GetString("RDSURL")
 		JWT_SECRET = viper.GetString("JWTSECRET")
-		MID_KEY = viper.GetString("MIDKEY")
 		app.DB_USERNAME = viper.Get("DBUSER").(string)
 		app.DB_PASSWORD = viper.Get("DBPASS").(string)
 		app.DB_HOSTNAME = viper.Get("DBHOST").(string)

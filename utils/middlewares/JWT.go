@@ -46,15 +46,4 @@ func ExtractTokenUserId(e echo.Context) int {
 		return int(userId)
 	}
 	return 0
-
-	// user := e.Get("user").(*jwt.Token)
-	// if user.Valid {
-	// 	claims := user.Claims.(jwt.MapClaims)
-	// 	userId, isValidUserId := claims["userId"].(float64)
-	// 	if !isValidUserId {
-	// 		return 0
-	// 	}
-	// 	return int(userId)
-	// }
-	// return 0
 }

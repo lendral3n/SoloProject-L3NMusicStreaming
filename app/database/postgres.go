@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"l3nmusic/app/config"
 	ud "l3nmusic/features/user/data"
+	md "l3nmusic/features/music/data"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -21,6 +22,7 @@ func InitDBPostgres(cfg *config.AppConfig) *gorm.DB {
 
 	DB.AutoMigrate(
 		&ud.User{},
+		&md.Song{},
 	)
 
 	return DB
