@@ -3,6 +3,7 @@ module l3nmusic
 go 1.21.5
 
 require (
+	github.com/aws/aws-sdk-go v1.50.25
 	github.com/cloudinary/cloudinary-go/v2 v2.7.0
 	github.com/go-playground/validator/v10 v10.18.0
 	github.com/go-redis/redis/v8 v8.11.5
@@ -32,6 +33,7 @@ require (
 	github.com/jackc/pgx/v5 v5.4.3 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect

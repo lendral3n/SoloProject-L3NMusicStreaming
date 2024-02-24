@@ -4,7 +4,7 @@ import (
 	ud "l3nmusic/features/user/data"
 	uh "l3nmusic/features/user/handler"
 	us "l3nmusic/features/user/service"
-	"l3nmusic/utils/cloudinary"
+	"l3nmusic/utils/upload"
 	"l3nmusic/utils/encrypts"
 	"l3nmusic/utils/middlewares"
 
@@ -16,11 +16,11 @@ import (
 
 func InitRouter(db *gorm.DB, e *echo.Echo, rds cache.Redis) {
 	hash := encrypts.New()
-	cloudinaryUploader := cloudinary.New()
+	s3Uploader := upload.New()
 
 	userData := ud.New(db)
 	userService := us.New(userData, hash)
-	userHandlerAPI := uh.New(userService, cloudinaryUploader)
+	userHandlerAPI := uh.New(userService, s3Uploader)
 
 	// define routes/ endpoint USER
 	e.POST("/login", userHandlerAPI.Login)

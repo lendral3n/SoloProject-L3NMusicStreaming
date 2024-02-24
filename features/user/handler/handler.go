@@ -2,7 +2,7 @@ package handler
 
 import (
 	"l3nmusic/features/user"
-	"l3nmusic/utils/cloudinary"
+	"l3nmusic/utils/upload"
 	"l3nmusic/utils/middlewares"
 	"l3nmusic/utils/responses"
 	"net/http"
@@ -12,13 +12,13 @@ import (
 
 type UserHandler struct {
 	userService user.UserServiceInterface
-	cld         cloudinary.CloudinaryUploaderInterface
+	s3         upload.S3UploaderInterface
 }
 
-func New(service user.UserServiceInterface, cloudinaryUploader cloudinary.CloudinaryUploaderInterface) *UserHandler {
+func New(service user.UserServiceInterface, s3Uploader upload.S3UploaderInterface) *UserHandler {
 	return &UserHandler{
 		userService: service,
-		cld:         cloudinaryUploader,
+		s3:         s3Uploader,
 	}
 }
 
@@ -84,7 +84,7 @@ func (handler *UserHandler) UpdateUser(c echo.Context) error {
 
 	var imageURL string
 	if fileData != nil {
-		imageURL, err = handler.cld.UploadImage(fileData)
+		imageURL, err = handler.s3.UploadImage(fileData)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, responses.WebResponse("error uploading the image "+err.Error(), nil))
 		}
