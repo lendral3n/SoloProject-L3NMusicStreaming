@@ -59,7 +59,9 @@ func (handler *UserHandler) Login(c echo.Context) error {
 func (handler *UserHandler) GetUser(c echo.Context) error {
 	userIdLogin := middlewares.ExtractTokenUserId(c)
 
-	result, errSelect := handler.userService.GetById(userIdLogin)
+	ctx := c.Request().Context()
+
+	result, errSelect := handler.userService.GetById(ctx, userIdLogin)
 	if errSelect != nil {
 		return c.JSON(http.StatusInternalServerError, responses.WebResponse("error read data. "+errSelect.Error(), nil))
 	}

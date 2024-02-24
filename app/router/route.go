@@ -18,7 +18,7 @@ func InitRouter(db *gorm.DB, e *echo.Echo, rds cache.Redis) {
 	hash := encrypts.New()
 	s3Uploader := upload.New()
 
-	userData := ud.New(db)
+	userData := ud.New(db, rds)
 	userService := us.New(userData, hash)
 	userHandlerAPI := uh.New(userService, s3Uploader)
 
