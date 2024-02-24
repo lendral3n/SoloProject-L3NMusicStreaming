@@ -1,6 +1,9 @@
 package user
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type Core struct {
 	ID           uint
@@ -25,7 +28,7 @@ type CoreUpdate struct {
 // interface untuk Data Layer
 type UserDataInterface interface {
 	Insert(input Core) error
-	SelectById(userId int) (*Core, error)
+	SelectById(ctx context.Context, userId int) (*Core, error)
 	Update(userId int, input CoreUpdate) error
 	Delete(userId int) error
 	Login(email, password string) (data *Core, err error)
@@ -36,7 +39,7 @@ type UserDataInterface interface {
 // interface untuk Service Layer
 type UserServiceInterface interface {
 	Create(input Core) error
-	GetById(userId int) (*Core, error)
+	GetById(ctx context.Context, userId int) (*Core, error)
 	Update(userId int, input CoreUpdate) error
 	Delete(userId int) error
 	Login(email, password string) (data *Core, token string, err error)

@@ -1,10 +1,11 @@
 package service
 
 import (
+	"context"
+	"errors"
 	"l3nmusic/features/user"
 	"l3nmusic/utils/encrypts"
 	"l3nmusic/utils/middlewares"
-	"errors"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -44,8 +45,8 @@ func (service *userService) Create(input user.Core) error {
 }
 
 // GetById implements user.UserServiceInterface.
-func (service *userService) GetById(userId int) (*user.Core, error) {
-	result, err := service.userData.SelectById(userId)
+func (service *userService) GetById(ctx context.Context, userId int) (*user.Core, error) {
+	result, err := service.userData.SelectById(ctx, userId)
 	return result, err
 }
 
@@ -102,27 +103,12 @@ func (service *userService) Login(email string, password string) (data *user.Cor
 
 // ChangePassword implements user.UserServiceInterface.
 func (service *userService) ChangePassword(userId int, oldPassword, newPassword string) error {
-	user, errGet := service.GetById(userId)
-	if errGet != nil {
-		return errGet
-	}
-
 	if oldPassword == "" {
 		return errors.New("please input current password")
 	}
 
 	if newPassword == "" {
 		return errors.New("please input new password")
-	}
-
-	checkPassword := service.hashService.CheckPasswordHash(user.Password, oldPassword)
-	if !checkPassword {
-		return errors.New("current password not match")
-	}
-
-	checkNewPassword := service.hashService.CheckPasswordHash(user.Password, newPassword)
-	if checkNewPassword {
-		return errors.New("password cannot be the same")
 	}
 
 	hashedNewPass, errHash := service.hashService.HashPassword(newPassword)
