@@ -91,13 +91,39 @@ func (handler *MusicHandler) GetAllMusic(c echo.Context) error {
 }
 
 func (handler *MusicHandler) AddLikedSong(c echo.Context) error {
-	userID := middlewares.ExtractTokenUserId(c)
+	userIdLogin := middlewares.ExtractTokenUserId(c)
+	if userIdLogin == 0 {
+		return c.JSON(http.StatusUnauthorized, responses.WebResponse("Unauthorized user", nil))
+	}
 	songID, _ := strconv.Atoi(c.Param("music_id")) 
 
-	message, err := handler.musicService.AddLikedSong(userID, songID)
+	message, err := handler.musicService.AddLikedSong(userIdLogin, songID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, responses.WebResponse(err.Error(), nil))
 	}
 
 	return c.JSON(http.StatusOK, responses.WebResponse(message, nil))
+}
+
+func (handler *MusicHandler) GetLikedSong(c echo.Context) error {
+	userIdLogin := middlewares.ExtractTokenUserId(c)
+	if userIdLogin == 0 {
+		return c.JSON(http.StatusUnauthorized, responses.WebResponse("Unauthorized user", nil))
+	}
+
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	limit, _ := strconv.Atoi(c.QueryParam("limit"))
+
+	ctx := c.Request().Context()
+	songs, err := handler.musicService.GetLikedSong(ctx, userIdLogin, page, limit)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.WebResponse("error get data", nil))
+	}
+
+	var songResponses []MusicResponse
+	for _, song := range songs {
+		songResponses = append(songResponses, CoreToResponseMusic(song))
+	}
+
+	return c.JSON(http.StatusOK, responses.WebResponse("success get liked music", songResponses))
 }
