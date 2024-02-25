@@ -121,12 +121,3 @@ func (repo *userQuery) ChangePassword(userId int, oldPassword, newPassword strin
 	}
 	return nil
 }
-
-func (repo *userQuery) GetTotalUser() (int, error) {
-	var count int64
-	tx := repo.db.Model(&User{}).Count(&count)
-	if tx.Error != nil {
-		return 0, tx.Error
-	}
-	return int(count), nil
-}

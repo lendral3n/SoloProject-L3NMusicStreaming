@@ -23,6 +23,7 @@ func InitDBPostgres(cfg *config.AppConfig) *gorm.DB {
 	DB.AutoMigrate(
 		&ud.User{},
 		&md.Song{},
+		&md.LikedSong{},
 	)
 
 	return DB

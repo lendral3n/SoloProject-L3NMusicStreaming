@@ -77,7 +77,7 @@ func (handler *MusicHandler) GetAllMusic(c echo.Context) error {
 	limit, _ := strconv.Atoi(c.QueryParam("limit"))
 
 	ctx := c.Request().Context()
-	songs, err := handler.musicService.SelectAll(ctx, page, limit)
+	songs, err := handler.musicService.GetAll(ctx, page, limit)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, responses.WebResponse("error get data", nil))
 	}
@@ -88,4 +88,16 @@ func (handler *MusicHandler) GetAllMusic(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, responses.WebResponse("success get music", songResponses))
+}
+
+func (handler *MusicHandler) AddLikedSong(c echo.Context) error {
+	userID := middlewares.ExtractTokenUserId(c)
+	songID, _ := strconv.Atoi(c.Param("music_id")) 
+
+	message, err := handler.musicService.AddLikedSong(userID, songID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, responses.WebResponse(err.Error(), nil))
+	}
+
+	return c.JSON(http.StatusOK, responses.WebResponse(message, nil))
 }
