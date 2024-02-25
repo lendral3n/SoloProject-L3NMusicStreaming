@@ -47,9 +47,10 @@ func InitRouter(db *gorm.DB, e *echo.Echo, rds cache.Redis) {
 	// define routes/ endpoint MUSIC
 	e.POST("/music", musicHandlerAPI.CreateMusic, middlewares.JWTMiddleware())
 	e.GET("/music", musicHandlerAPI.GetAllMusic)
-	e.POST("/music/liked/:music_id", musicHandlerAPI.AddLikedSong, middlewares.JWTMiddleware())
+	e.POST("/music/liked/:song_id", musicHandlerAPI.AddLikedSong, middlewares.JWTMiddleware())
 	e.GET("music/liked", musicHandlerAPI.GetLikedSong, middlewares.JWTMiddleware())
 
 	// define routes/ endpoint PLAYLIST
 	e.POST("/playlist", playlistHandlerAPI.CreatePlaylist, middlewares.JWTMiddleware())
+	e.POST("/playlist/:song_id", playlistHandlerAPI.AddSongToPlaylist, middlewares.JWTMiddleware())
 }

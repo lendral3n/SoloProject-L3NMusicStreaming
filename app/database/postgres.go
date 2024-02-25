@@ -5,6 +5,7 @@ import (
 	"l3nmusic/app/config"
 	ud "l3nmusic/features/user/data"
 	md "l3nmusic/features/music/data"
+	pd "l3nmusic/features/playlist/data"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -24,6 +25,8 @@ func InitDBPostgres(cfg *config.AppConfig) *gorm.DB {
 		&ud.User{},
 		&md.Song{},
 		&md.LikedSong{},
+		&md.Playlist{},
+		&pd.PlaylistSong{},
 	)
 
 	return DB

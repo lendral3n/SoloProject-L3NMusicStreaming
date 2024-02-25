@@ -10,7 +10,6 @@ require (
 	github.com/labstack/echo-jwt/v4 v4.2.0
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/spf13/viper v1.18.2
-	github.com/tcolgate/mp3 v0.0.0-20170426193717-e79c5a46d300
 	golang.org/x/crypto v0.19.0
 	gorm.io/driver/postgres v1.5.6
 	gorm.io/gorm v1.25.7

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"l3nmusic/features/playlist"
 )
 
@@ -22,5 +23,23 @@ func (service *playlistService) Create(userIdLogin int, input playlist.Core) err
 		return err
 	}
 
+	return nil
+}
+
+// CreateSongToPlaylist implements playlist.PlaylistServiceInterface.
+func (service *playlistService) CreateSongToPlaylist(userIdLogin int, input playlist.PlaylistSongCore) error {
+	playlist, err := service.musicData.SelectPlaylistById(userIdLogin, int(input.PlaylistID))
+	if err != nil {
+		return err
+	}
+
+	if playlist.UserID != uint(userIdLogin) {
+		return errors.New("playlist ini bukan milik anda")
+	}
+
+	err = service.musicData.InsertSongToPlaylist(input)
+	if err != nil {
+		return err
+	}
 	return nil
 }

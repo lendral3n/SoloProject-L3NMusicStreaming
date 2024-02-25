@@ -95,7 +95,7 @@ func (handler *MusicHandler) AddLikedSong(c echo.Context) error {
 	if userIdLogin == 0 {
 		return c.JSON(http.StatusUnauthorized, responses.WebResponse("Unauthorized user", nil))
 	}
-	songID, _ := strconv.Atoi(c.Param("music_id")) 
+	songID, _ := strconv.Atoi(c.Param("song_id")) 
 
 	message, err := handler.musicService.AddLikedSong(userIdLogin, songID)
 	if err != nil {
