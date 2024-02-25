@@ -2,7 +2,7 @@ package data
 
 import (
 	"l3nmusic/features/music"
-	"l3nmusic/features/user/data"
+	ud "l3nmusic/features/user/data"
 
 	"gorm.io/gorm"
 )
@@ -16,14 +16,23 @@ type Song struct {
 	Music      string
 	PhotoMusic string
 	UserID     uint
-	User       data.User
+	User       ud.User
 	Likes      []LikedSong
+	Playlists  []Playlist `gorm:"many2many:playlist_songs;"`
+}
+
+type Playlist struct {
+	gorm.Model
+	Name   string
+	UserID uint
+	User   ud.User
+	Songs  []Song `gorm:"many2many:playlist_songs;"`
 }
 
 type LikedSong struct {
 	gorm.Model
 	UserID uint
-	User   data.User
+	User   ud.User
 	SongID uint
 	Song   Song
 }
