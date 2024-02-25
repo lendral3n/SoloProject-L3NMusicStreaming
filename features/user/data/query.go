@@ -39,18 +39,15 @@ func (repo *userQuery) Insert(input user.Core) error {
 
 // SelectById implements user.UserDataInterface.
 func (repo *userQuery) SelectById(ctx context.Context, userId int) (*user.Core, error) {
-	// Coba ambil data dari Redis terlebih dahulu
 	userData, err := repo.redis.Get(ctx, fmt.Sprintf("user:%d", userId))
 	if err == nil && userData != "" {
 		var user user.Core
 		err = json.Unmarshal([]byte(userData), &user)
 		if err == nil {
-			// Jika data ditemukan di Redis dan bisa di-unmarshal, kembalikan data tersebut
 			return &user, nil
 		}
 	}
 
-	// Jika data tidak ditemukan di Redis atau terjadi error saat unmarshal, ambil data dari database
 	var userDataGorm User
 	tx := repo.db.First(&userDataGorm, userId)
 	if tx.Error != nil {
@@ -59,7 +56,6 @@ func (repo *userQuery) SelectById(ctx context.Context, userId int) (*user.Core, 
 
 	result := userDataGorm.ModelToCore()
 
-	// Simpan data ke Redis untuk penggunaan selanjutnya
 	jsonData, err := json.Marshal(result)
 	if err == nil {
 		userData = string(jsonData)
