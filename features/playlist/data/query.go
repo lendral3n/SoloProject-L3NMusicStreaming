@@ -1,8 +1,10 @@
 package data
 
 import (
+	"context"
 	"errors"
 	"l3nmusic/app/cache"
+	"l3nmusic/features/music"
 	md "l3nmusic/features/music/data"
 	"l3nmusic/features/playlist"
 
@@ -78,4 +80,26 @@ func (repo *playlistQuery) SelectPlaylistsByUser(userIdLogin int) ([]playlist.Co
 	}
 
 	return result, nil
+}
+
+
+// SelectSongsInPlaylist implements playlist.PlaylistDataInterface.
+func (repo *playlistQuery) SelectSongsInPlaylist(ctx context.Context, playlistID int) ([]music.Core, error) {
+	var playlistSongs []PlaylistSong
+	tx := repo.db.Where("playlist_id = ?", playlistID).Find(&playlistSongs)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	var songs []music.Core
+	for _, playlistSong := range playlistSongs {
+		var song md.Song
+		tx := repo.db.First(&song, playlistSong.SongID)
+		if tx.Error != nil {
+			return nil, tx.Error
+		}
+		songs = append(songs, song.ModelToCore())
+	}
+
+	return songs, nil
 }

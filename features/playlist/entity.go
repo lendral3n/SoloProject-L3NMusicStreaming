@@ -1,6 +1,10 @@
 package playlist
 
-import "time"
+import (
+	"context"
+	"l3nmusic/features/music"
+	"time"
+)
 
 type Core struct {
 	ID        uint
@@ -24,6 +28,7 @@ type PlaylistDataInterface interface {
 	InsertSongToPlaylist(input PlaylistSongCore) error
 	SelectPlaylistById(userIdLogin, playlistID int) (Core, error)
 	SelectPlaylistsByUser(userIdLogin int) ([]Core, error)
+	SelectSongsInPlaylist(ctx context.Context, playlistID int) ([]music.Core, error)
 }
 
 // interface untuk Service Layer
@@ -31,4 +36,5 @@ type PlaylistServiceInterface interface {
 	Create(userIdLogin int, input Core) error
 	CreateSongToPlaylist(userIdLogin int, input PlaylistSongCore) error
 	GetUserPlaylists(userIdLogin int) ([]Core, error)
+	GetSongsInPlaylist(ctx context.Context, playlistID int) ([]music.Core, error)
 }
