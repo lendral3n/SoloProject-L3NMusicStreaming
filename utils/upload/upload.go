@@ -2,7 +2,6 @@ package upload
 
 import (
 	"fmt"
-	"io"
 	"l3nmusic/app/config"
 	"mime/multipart"
 	"path/filepath"
@@ -16,7 +15,7 @@ import (
 
 type S3UploaderInterface interface {
 	UploadImage(fileHeader *multipart.FileHeader) (string, error)
-	UploadMusic(file io.Reader, fileName string) (string, error)
+	UploadMusic(fileHeader *multipart.FileHeader) (string, error)
 }
 
 type S3Uploader struct {
@@ -65,18 +64,24 @@ func (su *S3Uploader) UploadImage(fileHeader *multipart.FileHeader) (string, err
 	return resp.Location, nil
 }
 
-func (su *S3Uploader) UploadMusic(file io.Reader, fileName string) (string, error) {
-	ext := strings.ToLower(filepath.Ext(fileName))
+func (su *S3Uploader) UploadMusic(fileHeader *multipart.FileHeader) (string, error) {
+	ext := strings.ToLower(filepath.Ext(fileHeader.Filename))
 	if ext != ".mp3" && ext != ".wav" && ext != ".flac" {
 		return "", fmt.Errorf("invalid file type: %s", ext)
 	}
+
+	file, err := fileHeader.Open()
+	if err != nil {
+		return "", fmt.Errorf("error opening file: %w", err)
+	}
+	defer file.Close()
 
 	uploader := s3manager.NewUploader(su.sess)
 
 	// Upload input configuration
 	upParams := &s3manager.UploadInput{
 		Bucket: aws.String("bucketl3n"),
-		Key:    aws.String("music/" + fileName),
+		Key:    aws.String("music/" + fileHeader.Filename),
 		Body:   file,
 	}
 

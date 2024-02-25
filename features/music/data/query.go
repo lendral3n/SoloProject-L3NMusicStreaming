@@ -1,8 +1,9 @@
 package data
 
 import (
-	"gorm.io/gorm"
 	"l3nmusic/features/music"
+
+	"gorm.io/gorm"
 )
 
 type musicQuery struct {
@@ -15,10 +16,17 @@ func New(db *gorm.DB) music.MusicDataInterface {
 	}
 }
 
-
 // Insert implements music.MusicDataInterface.
-func (repo *musicQuery) Insert(input music.Core) error {
-	panic("unimplemented")
+func (repo *musicQuery) Insert(userIdLogin int, input music.Core) error {
+	musicInput := CoreToModel(input)
+	musicInput.UserID = uint(userIdLogin)
+
+	tx := repo.db.Create(&musicInput)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	return nil
 }
 
 // SelectAll implements music.MusicDataInterface.
