@@ -1,7 +1,9 @@
 package service
 
 import (
+	"context"
 	"errors"
+	"l3nmusic/features/music"
 	"l3nmusic/features/playlist"
 )
 
@@ -47,5 +49,11 @@ func (service *playlistService) CreateSongToPlaylist(userIdLogin int, input play
 // GetUserPlaylists implements playlist.PlaylistServiceInterface.
 func (service *playlistService) GetUserPlaylists(userIdLogin int) ([]playlist.Core, error) {
 	result, err := service.playlistData.SelectPlaylistsByUser(userIdLogin)
+	return result, err
+}
+
+// GetSongsInPlaylist implements playlist.PlaylistServiceInterface.
+func (service *playlistService) GetSongsInPlaylist(ctx context.Context, playlistID int) ([]music.Core, error) {
+	result, err := service.playlistData.SelectSongsInPlaylist(ctx, playlistID)
 	return result, err
 }

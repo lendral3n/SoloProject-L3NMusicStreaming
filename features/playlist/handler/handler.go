@@ -5,6 +5,7 @@ import (
 	"l3nmusic/utils/middlewares"
 	"l3nmusic/utils/responses"
 	"net/http"
+	mh "l3nmusic/features/music/handler"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -69,7 +70,6 @@ func (handler *PlaylistHandler) AddSongToPlaylist(c echo.Context) error {
 	return c.JSON(http.StatusOK, responses.WebResponse("Berhasil menambahkan lagu ke playlist", nil))
 }
 
-
 func (handler *PlaylistHandler) GetUserPlaylists(c echo.Context) error {
 	userIdLogin := middlewares.ExtractTokenUserId(c)
 	if userIdLogin == 0 {
@@ -87,4 +87,29 @@ func (handler *PlaylistHandler) GetUserPlaylists(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, responses.WebResponse("Berhasil mendapatkan playlist", response))
+}
+
+func (handler *PlaylistHandler) GetSongsInPlaylist(c echo.Context) error {
+	// userIdLogin := middlewares.ExtractTokenUserId(c)
+	// if userIdLogin == 0 {
+	// 	return c.JSON(http.StatusUnauthorized, responses.WebResponse("Unauthorized user", nil))
+	// }
+
+	ctx := c.Request().Context()
+	playlistID, err := strconv.Atoi(c.Param("playlist_id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, responses.WebResponse("Invalid playlist ID", nil))
+	}
+
+	songs, err := handler.playlistService.GetSongsInPlaylist(ctx, playlistID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.WebResponse(err.Error(), nil))
+	}
+
+	var response []mh.MusicResponse
+	for _, s := range songs {
+		response = append(response, mh.CoreToResponseMusic(s))
+	}
+
+	return c.JSON(http.StatusOK, responses.WebResponse("Berhasil mendapatkan lagu dalam playlist", response))
 }
