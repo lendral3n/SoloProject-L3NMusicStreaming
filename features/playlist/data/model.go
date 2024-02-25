@@ -1,0 +1,23 @@
+package data
+
+import (
+	md "l3nmusic/features/music/data"
+	"l3nmusic/features/playlist"
+)
+
+func CoreToModel(input playlist.Core) md.Playlist {
+	return md.Playlist{
+		Name:   input.Name,
+		UserID: input.UserID,
+	}
+}
+
+func ModelToCorePlaylist(p md.Playlist) playlist.Core {
+	return playlist.Core{
+		ID:        p.ID,
+		Name:      p.Name,
+		UserID:    p.UserID,
+		CreatedAt: p.CreatedAt,
+		UpdatedAt: p.UpdatedAt,
+	}
+}

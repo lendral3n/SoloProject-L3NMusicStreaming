@@ -1,6 +1,9 @@
 package router
 
 import (
+	pd "l3nmusic/features/playlist/data"
+	ph "l3nmusic/features/playlist/handler"
+	ps "l3nmusic/features/playlist/service"
 	md "l3nmusic/features/music/data"
 	mh "l3nmusic/features/music/handler"
 	ms "l3nmusic/features/music/service"
@@ -29,6 +32,10 @@ func InitRouter(db *gorm.DB, e *echo.Echo, rds cache.Redis) {
 	musicService := ms.New(musicData, userService)
 	musicHandlerAPI := mh.New(musicService, s3Uploader)
 
+	playlistData := pd.New(db, rds)
+	playlistService := ps.New(playlistData)
+	playlistHandlerAPI := ph.New(playlistService)
+
 	// define routes/ endpoint USER
 	e.POST("/login", userHandlerAPI.Login)
 	e.POST("/users", userHandlerAPI.RegisterUser)
@@ -42,4 +49,7 @@ func InitRouter(db *gorm.DB, e *echo.Echo, rds cache.Redis) {
 	e.GET("/music", musicHandlerAPI.GetAllMusic)
 	e.POST("/music/liked/:music_id", musicHandlerAPI.AddLikedSong, middlewares.JWTMiddleware())
 	e.GET("music/liked", musicHandlerAPI.GetLikedSong, middlewares.JWTMiddleware())
+
+	// define routes/ endpoint PLAYLIST
+	e.POST("/playlist", playlistHandlerAPI.CreatePlaylist, middlewares.JWTMiddleware())
 }
