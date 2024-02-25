@@ -40,7 +40,7 @@ func (service *musicService) Create(ctx context.Context, userIdLogin int, input 
 }
 
 // SelectAll implements music.MusicServiceInterface.
-func (service *musicService) SelectAll(ctx context.Context, page int, limit int) ([]music.Core, error) {
+func (service *musicService) GetAll(ctx context.Context, page int, limit int) ([]music.Core, error) {
 	if page == 0 {
 		page = 1
 	}
@@ -51,4 +51,25 @@ func (service *musicService) SelectAll(ctx context.Context, page int, limit int)
 
 	result, err := service.musicData.SelectAll(ctx, page, limit)
 	return result, err
+}
+
+// AddLikedSong implements music.MusicServiceInterface.
+func (service *musicService) AddLikedSong(userIdLogin int, songId int) (string, error) {
+	isLiked, err := service.musicData.CheckLikedSong(userIdLogin, songId)
+	if err != nil {
+		return "", err
+	}
+	if isLiked {
+		err = service.musicData.DeleteLikedSong(userIdLogin, songId)
+		if err != nil {
+			return "", err
+		}
+		return "berhasil menghapus musik yang disukai", nil
+	} else {
+		err = service.musicData.InsertLikedSong(userIdLogin, songId)
+		if err != nil {
+			return "", err
+		}
+		return "berhasil menambahkan musik yang disukai", nil
+	}
 }

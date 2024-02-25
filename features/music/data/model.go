@@ -17,6 +17,15 @@ type Song struct {
 	PhotoMusic string
 	UserID     uint
 	User       data.User
+	Likes      []LikedSong
+}
+
+type LikedSong struct {
+	gorm.Model
+	UserID uint
+	User   data.User
+	SongID uint
+	Song   Song
 }
 
 func CoreToModel(input music.Core) Song {
@@ -42,5 +51,12 @@ func (s Song) ModelToCore() music.Core {
 		PhotoMusic: s.PhotoMusic,
 		CreatedAt:  s.CreatedAt,
 		UpdatedAt:  s.UpdatedAt,
+	}
+}
+
+func CoreToModelLiked(input music.CoreLiked) LikedSong {
+	return LikedSong{
+		UserID: input.UserID,
+		SongID: input.SongID,
 	}
 }

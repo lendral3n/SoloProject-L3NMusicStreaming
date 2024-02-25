@@ -14,20 +14,30 @@ type Core struct {
 	Duration   float64
 	Music      string
 	PhotoMusic string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	UserID    uint
-	User      user.Core
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	UserID     uint
+	User       user.Core
+	Likes      []CoreLiked
+}
+
+type CoreLiked struct {
+	SongID uint
+	UserID uint
 }
 
 // interface untuk Data Layer
 type MusicDataInterface interface {
 	Insert(userIdLogin int, input Core) error
 	SelectAll(ctx context.Context, page, limit int) ([]Core, error)
+	InsertLikedSong(userIdLogin, songId int) error
+	CheckLikedSong(userIdLogin, songId int) (bool, error)
+	DeleteLikedSong(userIdLogin, songId int) error
 }
 
 // interface untuk Service Layer
 type MusicServiceInterface interface {
 	Create(ctx context.Context, userIdLogin int, input Core) error
-	SelectAll(ctx context.Context, page, limit int) ([]Core, error)
+	GetAll(ctx context.Context, page, limit int) ([]Core, error)
+	AddLikedSong(userIdLogin, songId int) (string, error)
 }

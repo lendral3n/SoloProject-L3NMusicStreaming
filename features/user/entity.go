@@ -33,7 +33,6 @@ type UserDataInterface interface {
 	Delete(userId int) error
 	Login(email, password string) (data *Core, err error)
 	ChangePassword(userId int, oldPassword, newPassword string) error
-	GetTotalUser() (int, error)
 }
 
 // interface untuk Service Layer

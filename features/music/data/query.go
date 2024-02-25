@@ -15,6 +15,28 @@ type musicQuery struct {
 	redis cache.Redis
 }
 
+// CheckLikedSong implements music.MusicDataInterface.
+func (repo *musicQuery) CheckLikedSong(userIdLogin int, songId int) (bool, error) {
+	var likedSong LikedSong
+	result := repo.db.Where("user_id = ? AND song_id = ?", userIdLogin, songId).First(&likedSong)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+		return false, result.Error
+	}
+	return true, nil
+}
+
+// DeleteLikedSong implements music.MusicDataInterface.
+func (repo *musicQuery) DeleteLikedSong(userIdLogin int, songId int) error {
+	tx := repo.db.Where("user_id = ? AND song_id = ?", userIdLogin, songId).Delete(&LikedSong{})
+	if tx.Error != nil {
+		return tx.Error
+	}
+	return nil
+}
+
 func New(db *gorm.DB, redis cache.Redis) music.MusicDataInterface {
 	return &musicQuery{
 		db:    db,
@@ -69,4 +91,19 @@ func (repo *musicQuery) SelectAll(ctx context.Context, page, limit int) ([]music
 	}
 
 	return cores, nil
+}
+
+// InsertLikedSong implements music.MusicDataInterface.
+func (repo *musicQuery) InsertLikedSong(userIdLogin int, songId int) error {
+	var likeCore music.CoreLiked
+	likedInput := CoreToModelLiked(likeCore)
+	likedInput.UserID = uint(userIdLogin)
+	likedInput.SongID = uint(songId)
+
+	tx := repo.db.Create(&likedInput)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	return nil
 }
