@@ -73,3 +73,20 @@ func (service *musicService) AddLikedSong(userIdLogin int, songId int) (string, 
 		return "berhasil menambahkan musik yang disukai", nil
 	}
 }
+
+// GetLikedSong implements music.MusicServiceInterface.
+func (service *musicService) GetLikedSong(ctx context.Context, userIdLogin int, page int, limit int) ([]music.Core, error) {
+	if page == 0 {
+		page = 1
+	}
+
+	if limit == 0 {
+		limit = 10
+	}
+
+	songs, err := service.musicData.SelectLikedSong(ctx, userIdLogin, page, limit)
+	if err != nil {
+		return nil, err
+	}
+	return songs, nil
+}

@@ -24,6 +24,8 @@ type Core struct {
 type CoreLiked struct {
 	SongID uint
 	UserID uint
+    CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 // interface untuk Data Layer
@@ -33,6 +35,7 @@ type MusicDataInterface interface {
 	InsertLikedSong(userIdLogin, songId int) error
 	CheckLikedSong(userIdLogin, songId int) (bool, error)
 	DeleteLikedSong(userIdLogin, songId int) error
+	SelectLikedSong(ctx context.Context, userIdLogin, page, limit int) ([]Core, error)
 }
 
 // interface untuk Service Layer
@@ -40,4 +43,5 @@ type MusicServiceInterface interface {
 	Create(ctx context.Context, userIdLogin int, input Core) error
 	GetAll(ctx context.Context, page, limit int) ([]Core, error)
 	AddLikedSong(userIdLogin, songId int) (string, error)
+	GetLikedSong(ctx context.Context, userIdLogin, page, limit int) ([]Core, error)
 }
