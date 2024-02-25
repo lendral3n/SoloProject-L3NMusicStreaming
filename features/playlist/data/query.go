@@ -63,3 +63,19 @@ func (repo *playlistQuery) InsertSongToPlaylist(input playlist.PlaylistSongCore)
 
 	return nil
 }
+
+// SelectPlaylistsByUser implements playlist PlaylistDataInterface.
+func (repo *playlistQuery) SelectPlaylistsByUser(userIdLogin int) ([]playlist.Core, error) {
+	var playlists []md.Playlist
+	tx := repo.db.Where("user_id = ?", userIdLogin).Find(&playlists)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	var result []playlist.Core
+	for _, p := range playlists {
+		result = append(result, ModelToCorePlaylist(p))
+	}
+
+	return result, nil
+}

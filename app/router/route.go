@@ -53,4 +53,5 @@ func InitRouter(db *gorm.DB, e *echo.Echo, rds cache.Redis) {
 	// define routes/ endpoint PLAYLIST
 	e.POST("/playlist", playlistHandlerAPI.CreatePlaylist, middlewares.JWTMiddleware())
 	e.POST("/playlist/:song_id", playlistHandlerAPI.AddSongToPlaylist, middlewares.JWTMiddleware())
+	e.GET("playlist", playlistHandlerAPI.GetUserPlaylists, middlewares.JWTMiddleware())
 }

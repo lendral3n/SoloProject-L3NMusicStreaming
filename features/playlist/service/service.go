@@ -6,19 +6,19 @@ import (
 )
 
 type playlistService struct {
-	musicData playlist.PlaylistDataInterface
+	playlistData playlist.PlaylistDataInterface
 }
 
 // dependency injection
 func New(repo playlist.PlaylistDataInterface) playlist.PlaylistServiceInterface {
 	return &playlistService{
-		musicData: repo,
+		playlistData: repo,
 	}
 }
 
 // Create implements playlist.PlaylistServiceInterface.
 func (service *playlistService) Create(userIdLogin int, input playlist.Core) error {
-	err := service.musicData.Insert(userIdLogin, input)
+	err := service.playlistData.Insert(userIdLogin, input)
 	if err != nil {
 		return err
 	}
@@ -28,7 +28,7 @@ func (service *playlistService) Create(userIdLogin int, input playlist.Core) err
 
 // CreateSongToPlaylist implements playlist.PlaylistServiceInterface.
 func (service *playlistService) CreateSongToPlaylist(userIdLogin int, input playlist.PlaylistSongCore) error {
-	playlist, err := service.musicData.SelectPlaylistById(userIdLogin, int(input.PlaylistID))
+	playlist, err := service.playlistData.SelectPlaylistById(userIdLogin, int(input.PlaylistID))
 	if err != nil {
 		return err
 	}
@@ -37,9 +37,15 @@ func (service *playlistService) CreateSongToPlaylist(userIdLogin int, input play
 		return errors.New("playlist ini bukan milik anda")
 	}
 
-	err = service.musicData.InsertSongToPlaylist(input)
+	err = service.playlistData.InsertSongToPlaylist(input)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+// GetUserPlaylists implements playlist.PlaylistServiceInterface.
+func (service *playlistService) GetUserPlaylists(userIdLogin int) ([]playlist.Core, error) {
+	result, err := service.playlistData.SelectPlaylistsByUser(userIdLogin)
+	return result, err
 }

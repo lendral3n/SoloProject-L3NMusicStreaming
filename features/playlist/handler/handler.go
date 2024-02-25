@@ -68,3 +68,23 @@ func (handler *PlaylistHandler) AddSongToPlaylist(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, responses.WebResponse("Berhasil menambahkan lagu ke playlist", nil))
 }
+
+
+func (handler *PlaylistHandler) GetUserPlaylists(c echo.Context) error {
+	userIdLogin := middlewares.ExtractTokenUserId(c)
+	if userIdLogin == 0 {
+		return c.JSON(http.StatusUnauthorized, responses.WebResponse("Unauthorized user", nil))
+	}
+
+	playlists, err := handler.playlistService.GetUserPlaylists(userIdLogin)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.WebResponse(err.Error(), nil))
+	}
+
+	var response []PlaylistResponse
+	for _, p := range playlists {
+		response = append(response, CoreToResponsePlaylist(p))
+	}
+
+	return c.JSON(http.StatusOK, responses.WebResponse("Berhasil mendapatkan playlist", response))
+}
