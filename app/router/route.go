@@ -1,6 +1,9 @@
 package router
 
 import (
+md "l3nmusic/features/music/data"
+	mh "l3nmusic/features/music/handler"
+	ms "l3nmusic/features/music/service"
 	ud "l3nmusic/features/user/data"
 	uh "l3nmusic/features/user/handler"
 	us "l3nmusic/features/user/service"
@@ -22,6 +25,10 @@ func InitRouter(db *gorm.DB, e *echo.Echo, rds cache.Redis) {
 	userService := us.New(userData, hash)
 	userHandlerAPI := uh.New(userService, s3Uploader)
 
+	musicData := md.New(db)
+	musicService := ms.New(musicData, userService)
+	musicHandlerAPI := mh.New(musicService, s3Uploader)
+
 	// define routes/ endpoint USER
 	e.POST("/login", userHandlerAPI.Login)
 	e.POST("/users", userHandlerAPI.RegisterUser)
@@ -30,4 +37,6 @@ func InitRouter(db *gorm.DB, e *echo.Echo, rds cache.Redis) {
 	e.DELETE("/users", userHandlerAPI.DeleteUser, middlewares.JWTMiddleware())
 	e.PUT("/change-password", userHandlerAPI.ChangePassword, middlewares.JWTMiddleware())
 
+	// define routes/ endpoint MUSIC
+	e.POST("/music", musicHandlerAPI.CreateMusic, middlewares.JWTMiddleware())
 }

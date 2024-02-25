@@ -11,7 +11,6 @@ import (
 var (
 	JWT_SECRET string
 	RDS_URL string
-	CLD_URL    string
 	AWS_ACCESS_KEY_ID string
 	AWS_SECRET_ACCESS_KEY string
 	AWS_REGION string
@@ -58,10 +57,6 @@ func ReadEnv() *AppConfig {
 		JWT_SECRET = val
 		isRead = false
 	}
-	if val, found := os.LookupEnv("CLDURL"); found {
-		CLD_URL = val
-		isRead = false
-	}
 	if val, found := os.LookupEnv("RDSURL"); found {
 		RDS_URL = val
 		isRead = false
@@ -93,7 +88,6 @@ func ReadEnv() *AppConfig {
 		AWS_ACCESS_KEY_ID = viper.GetString("AWSKEY")
 		AWS_SECRET_ACCESS_KEY = viper.GetString("AWSSECRET")
 		AWS_REGION = viper.GetString("AWSREGION")
-		CLD_URL = viper.GetString("CLDURL")
 		RDS_URL = viper.GetString("RDSURL")
 		JWT_SECRET = viper.GetString("JWTSECRET")
 		app.DB_USERNAME = viper.Get("DBUSER").(string)
