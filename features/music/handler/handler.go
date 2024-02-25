@@ -6,6 +6,7 @@ import (
 	"l3nmusic/utils/responses"
 	"l3nmusic/utils/upload"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -27,7 +28,7 @@ func (handler *MusicHandler) CreateMusic(c echo.Context) error {
 	if userIdLogin == 0 {
 		return c.JSON(http.StatusUnauthorized, responses.WebResponse("Unauthorized user", nil))
 	}
-	
+
 	ctx := c.Request().Context()
 	newMusic := MusicRequest{}
 	errBind := c.Bind(&newMusic)
@@ -69,4 +70,22 @@ func (handler *MusicHandler) CreateMusic(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, responses.WebResponse("berhasil menambahkan musik", nil))
+}
+
+func (handler *MusicHandler) GetAllMusic(c echo.Context) error {
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	limit, _ := strconv.Atoi(c.QueryParam("limit"))
+
+	ctx := c.Request().Context()
+	songs, err := handler.musicService.SelectAll(ctx, page, limit)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.WebResponse("error get data", nil))
+	}
+
+	var songResponses []MusicResponse
+	for _, song := range songs {
+		songResponses = append(songResponses, CoreToResponseMusic(song))
+	}
+
+	return c.JSON(http.StatusOK, responses.WebResponse("success get music", songResponses))
 }

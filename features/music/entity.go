@@ -23,11 +23,11 @@ type Core struct {
 // interface untuk Data Layer
 type MusicDataInterface interface {
 	Insert(userIdLogin int, input Core) error
-	SelectAll() ([]Core, error)
+	SelectAll(ctx context.Context, page, limit int) ([]Core, error)
 }
 
 // interface untuk Service Layer
 type MusicServiceInterface interface {
 	Create(ctx context.Context, userIdLogin int, input Core) error
-	SelectAll() ([]Core, error)
+	SelectAll(ctx context.Context, page, limit int) ([]Core, error)
 }
