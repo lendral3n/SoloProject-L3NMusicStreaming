@@ -60,9 +60,23 @@ func (service *playlistService) GetSongsInPlaylist(ctx context.Context, playlist
 
 
 // DeletePlaylist implements playlist.PlaylistServiceInterface.
-func (*playlistService) DeletePlaylist(userIdLogin int, playlistID int) error {
-	panic("unimplemented")
+func (service *playlistService) DeletePlaylist(userIdLogin int, playlistID int) error {
+	playlist, err := service.playlistData.SelectPlaylistById(userIdLogin, playlistID)
+	if err != nil {
+		return err
+	}
+
+	if playlist.UserID != uint(userIdLogin) {
+		return errors.New("playlist ini bukan milik anda")
+	}
+
+	err = service.playlistData.DeletePlaylist(userIdLogin, playlistID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
+
 
 // DeleteSongFromPlaylist implements playlist.PlaylistServiceInterface.
 func (service *playlistService) DeleteSongFromPlaylist(userIdLogin int, playlistID int, songID int) error {

@@ -109,6 +109,25 @@ func (handler *PlaylistHandler) GetSongsInPlaylist(c echo.Context) error {
 	return c.JSON(http.StatusOK, responses.WebResponse("Berhasil mendapatkan lagu dalam playlist", response))
 }
 
+func (handler *PlaylistHandler) DeletePlaylist(c echo.Context) error {
+	userIdLogin := middlewares.ExtractTokenUserId(c)
+	if userIdLogin == 0 {
+		return c.JSON(http.StatusUnauthorized, responses.WebResponse("Unauthorized user", nil))
+	}
+
+	playlistID, err := strconv.Atoi(c.Param("playlist_id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, responses.WebResponse("Invalid playlist ID", nil))
+	}
+
+	err = handler.playlistService.DeletePlaylist(userIdLogin, playlistID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.WebResponse(err.Error(), nil))
+	}
+
+	return c.JSON(http.StatusOK, responses.WebResponse("Berhasil menghapus playlist", nil))
+}
+
 func (handler *PlaylistHandler) DeleteSongFromPlaylist(c echo.Context) error {
 	userIdLogin := middlewares.ExtractTokenUserId(c)
 	if userIdLogin == 0 {

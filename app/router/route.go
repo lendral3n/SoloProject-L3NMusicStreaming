@@ -54,6 +54,7 @@ func InitRouter(db *gorm.DB, e *echo.Echo, rds cache.Redis) {
 	e.POST("/playlist", playlistHandlerAPI.CreatePlaylist, middlewares.JWTMiddleware())
 	e.POST("/playlist/:song_id", playlistHandlerAPI.AddSongToPlaylist, middlewares.JWTMiddleware())
 	e.GET("playlist", playlistHandlerAPI.GetUserPlaylists, middlewares.JWTMiddleware())
+	e.DELETE("playlist/:playlist_id", playlistHandlerAPI.DeletePlaylist, middlewares.JWTMiddleware())
 	e.GET("music/playlist/:playlist_id", playlistHandlerAPI.GetSongsInPlaylist)
 	e.DELETE("music/playlist/:playlist_id/song/:song_id", playlistHandlerAPI.DeleteSongFromPlaylist, middlewares.JWTMiddleware())
 }
