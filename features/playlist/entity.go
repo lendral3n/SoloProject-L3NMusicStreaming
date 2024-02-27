@@ -30,7 +30,7 @@ type PlaylistDataInterface interface {
 	SelectPlaylistsByUser(userIdLogin int) ([]Core, error)
 	SelectSongsInPlaylist(ctx context.Context, playlistID int) ([]music.Core, error)
 	DeleteSongFromPlaylist(playlistID, songID int) error
-	DeletePlaylist(playlistID int) error
+	DeletePlaylist(userIdLogin, playlistID int) error
 }
 
 // interface untuk Service Layer

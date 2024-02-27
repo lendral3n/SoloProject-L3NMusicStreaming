@@ -103,10 +103,30 @@ func (repo *playlistQuery) SelectSongsInPlaylist(ctx context.Context, playlistID
 	return songs, nil
 }
 
-
 // DeletePlaylist implements playlist.PlaylistDataInterface.
-func (*playlistQuery) DeletePlaylist(playlistID int) error {
-	panic("unimplemented")
+func (repo *playlistQuery) DeletePlaylist(userIdLogin int, playlistID int) error {
+	var playlist md.Playlist
+	tx := repo.db.First(&playlist, playlistID)
+	if tx.Error != nil {
+		if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
+			return errors.New("playlist not found")
+		}
+		return tx.Error
+	}
+
+	// Delete songs from the playlist
+	tx = repo.db.Where("playlist_id = ?", playlistID).Delete(&PlaylistSong{})
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	// Delete the playlist
+	tx = repo.db.Where("id = ?", playlistID).Delete(&md.Playlist{})
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	return nil
 }
 
 // DeleteSongFromPlaylist implements playlist.PlaylistDataInterface.
