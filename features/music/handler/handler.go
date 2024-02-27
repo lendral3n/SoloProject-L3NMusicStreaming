@@ -129,7 +129,7 @@ func (handler *MusicHandler) GetLikedSong(c echo.Context) error {
 }
 
 func (handler *MusicHandler) SearchMusic(c echo.Context) error {
-	query := c.QueryParam("search")
+	query := c.QueryParam("music")
 	page, _ := strconv.Atoi(c.QueryParam("page"))
 	limit, _ := strconv.Atoi(c.QueryParam("limit"))
 
