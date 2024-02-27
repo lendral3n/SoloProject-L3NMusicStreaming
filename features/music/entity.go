@@ -36,6 +36,7 @@ type MusicDataInterface interface {
 	CheckLikedSong(userIdLogin, songId int) (bool, error)
 	DeleteLikedSong(userIdLogin, songId int) error
 	SelectLikedSong(ctx context.Context, userIdLogin, page, limit int) ([]Core, error)
+	SearchMusic(ctx context.Context, query string, page, limit int) ([]Core, error)
 }
 
 // interface untuk Service Layer
@@ -44,4 +45,5 @@ type MusicServiceInterface interface {
 	GetAll(ctx context.Context, page, limit int) ([]Core, error)
 	AddLikedSong(userIdLogin, songId int) (string, error)
 	GetLikedSong(ctx context.Context, userIdLogin, page, limit int) ([]Core, error)
+	SearchMusic(ctx context.Context, query string, page, limit int) ([]Core, error)
 }

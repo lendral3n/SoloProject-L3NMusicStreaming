@@ -127,3 +127,22 @@ func (handler *MusicHandler) GetLikedSong(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, responses.WebResponse("success get liked music", songResponses))
 }
+
+func (handler *MusicHandler) SearchMusic(c echo.Context) error {
+	query := c.QueryParam("search")
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	limit, _ := strconv.Atoi(c.QueryParam("limit"))
+
+	ctx := c.Request().Context()
+	songs, err := handler.musicService.SearchMusic(ctx, query, page, limit)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.WebResponse(err.Error(), nil))
+	}
+
+	var response []MusicResponse
+	for _, s := range songs {
+		response = append(response, CoreToResponseMusic(s))
+	}
+
+	return c.JSON(http.StatusOK, responses.WebResponse("Berhasil mencari musik", response))
+}

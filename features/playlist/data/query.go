@@ -2,7 +2,9 @@ package data
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"l3nmusic/app/cache"
 	"l3nmusic/features/music"
 	md "l3nmusic/features/music/data"
@@ -84,6 +86,16 @@ func (repo *playlistQuery) SelectPlaylistsByUser(userIdLogin int) ([]playlist.Co
 
 // SelectSongsInPlaylist implements playlist.PlaylistDataInterface.
 func (repo *playlistQuery) SelectSongsInPlaylist(ctx context.Context, playlistID int) ([]music.Core, error) {
+	key := fmt.Sprintf("playlist:%d:songs", playlistID)
+	songsData, err := repo.redis.Get(ctx, key)
+	if err == nil && songsData != "" {
+		var songs []music.Core
+		err = json.Unmarshal([]byte(songsData), &songs)
+		if err == nil {
+			return songs, nil
+		}
+	}
+
 	var playlistSongs []PlaylistSong
 	tx := repo.db.Where("playlist_id = ?", playlistID).Find(&playlistSongs)
 	if tx.Error != nil {
@@ -98,6 +110,15 @@ func (repo *playlistQuery) SelectSongsInPlaylist(ctx context.Context, playlistID
 			return nil, tx.Error
 		}
 		songs = append(songs, song.ModelToCore())
+	}
+
+	jsonData, err := json.Marshal(songs)
+	if err == nil {
+		songsData = string(jsonData)
+		err = repo.redis.Set(ctx, key, songsData)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return songs, nil
@@ -132,8 +153,8 @@ func (repo *playlistQuery) DeletePlaylist(userIdLogin int, playlistID int) error
 // DeleteSongFromPlaylist implements playlist.PlaylistDataInterface.
 func (repo *playlistQuery) DeleteSongFromPlaylist(playlistID int, songID int) error {
 	tx := repo.db.Where("playlist_id = ? AND song_id = ?", playlistID, songID).Delete(&PlaylistSong{})
-    if tx.Error != nil {
-        return tx.Error
-    }
-    return nil
+	if tx.Error != nil {
+		return tx.Error
+	}
+	return nil
 }

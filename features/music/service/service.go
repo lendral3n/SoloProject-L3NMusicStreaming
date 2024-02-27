@@ -90,3 +90,17 @@ func (service *musicService) GetLikedSong(ctx context.Context, userIdLogin int, 
 	}
 	return songs, nil
 }
+
+// SearchMusic implements music.MusicServiceInterface.
+func (service *musicService) SearchMusic(ctx context.Context, query string, page int, limit int) ([]music.Core, error) {
+	if page == 0 {
+		page = 1
+	}
+
+	if limit == 0 {
+		limit = 10
+	}
+
+	result, err := service.musicData.SearchMusic(ctx, query, page, limit)
+	return result, err
+}
