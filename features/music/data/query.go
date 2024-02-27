@@ -141,5 +141,43 @@ func (repo *musicQuery) SelectLikedSong(ctx context.Context, userIdLogin, page, 
 			return nil, err
 		}
 	}
+
+	return cores, nil
+}
+
+// SearchMusic implements music.MusicDataInterface.
+func (repo *musicQuery) SearchMusic(ctx context.Context, query string, page, limit int) ([]music.Core, error) {
+	key := fmt.Sprintf("songs:search:%s:%d:%d", query, page, limit)
+	songsData, err := repo.redis.Get(ctx, key)
+	if err == nil && songsData != "" {
+		var songs []music.Core
+		err = json.Unmarshal([]byte(songsData), &songs)
+		if err == nil {
+			return songs, nil
+		}
+	}
+
+	var songs []Song
+	offset := (page - 1) * limit
+
+	result := repo.db.Where("title LIKE ?", "%"+query+"%").Or("artist LIKE ?", "%"+query+"%").Or("genre LIKE ?", "%"+query+"%").Offset(offset).Limit(limit).Find(&songs)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var cores []music.Core
+	for _, song := range songs {
+		cores = append(cores, song.ModelToCore())
+	}
+
+	jsonData, err := json.Marshal(cores)
+	if err == nil {
+		songsData = string(jsonData)
+		err = repo.redis.Set(ctx, key, songsData)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return cores, nil
 }
