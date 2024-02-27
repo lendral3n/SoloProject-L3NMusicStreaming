@@ -61,10 +61,12 @@ L3NMusicStreaming adalah platform streaming musik yang dirancang untuk memberika
 ## 🛠️ Teknologi Stack
 
 - **Golang**: Bahasa pemrograman yang digunakan untuk mengembangkan backend aplikasi.
+- **Echo**: Framework web yang sangat cepat dan mudah digunakan untuk Go, digunakan untuk membangun aplikasi web dan API.
 - **GORM**: Object-Relational Mapping (ORM) library untuk Golang.
 - **PostgreSQL**: Sistem manajemen basis data relasional.
 - **Amazon S3**: Layanan penyimpanan objek yang menawarkan skalabilitas, perlindungan data, dan kinerja.
-- **Amazon RDS**: Layanan penyimpanan database yang menawarkan skalabilitas, perlindungan data, dan kinerja.
+- **Amazon RDS**: Layanan yang memudahkan pengaturan, pengoperasian, dan penskalaan basis data relasional di cloud.
+- **Redis**: Penyimpanan data nilai utama di dalam memori yang super cepat, digunakan sebagai database, cache, dan broker pesan.
 - **JWT**: JSON Web Token untuk mengamankan pertukaran data.
 - **AWS**: Amazon Web Services, platform cloud yang menawarkan berbagai layanan infrastruktur IT.
 - **Docker**: Platform yang memungkinkan pengembang untuk membangun, mengemas, dan mendistribusikan aplikasi dengan mudah.
