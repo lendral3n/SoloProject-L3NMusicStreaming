@@ -90,11 +90,6 @@ func (handler *PlaylistHandler) GetUserPlaylists(c echo.Context) error {
 }
 
 func (handler *PlaylistHandler) GetSongsInPlaylist(c echo.Context) error {
-	// userIdLogin := middlewares.ExtractTokenUserId(c)
-	// if userIdLogin == 0 {
-	// 	return c.JSON(http.StatusUnauthorized, responses.WebResponse("Unauthorized user", nil))
-	// }
-
 	ctx := c.Request().Context()
 	playlistID, err := strconv.Atoi(c.Param("playlist_id"))
 	if err != nil {
@@ -112,4 +107,28 @@ func (handler *PlaylistHandler) GetSongsInPlaylist(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, responses.WebResponse("Berhasil mendapatkan lagu dalam playlist", response))
+}
+
+func (handler *PlaylistHandler) DeleteSongFromPlaylist(c echo.Context) error {
+	userIdLogin := middlewares.ExtractTokenUserId(c)
+	if userIdLogin == 0 {
+		return c.JSON(http.StatusUnauthorized, responses.WebResponse("Unauthorized user", nil))
+	}
+
+	playlistID, err := strconv.Atoi(c.Param("playlist_id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, responses.WebResponse("Invalid playlist ID", nil))
+	}
+
+	songID, err := strconv.Atoi(c.Param("song_id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, responses.WebResponse("Invalid song ID", nil))
+	}
+
+	err = handler.playlistService.DeleteSongFromPlaylist(userIdLogin, playlistID, songID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.WebResponse(err.Error(), nil))
+	}
+
+	return c.JSON(http.StatusOK, responses.WebResponse("Berhasil menghapus lagu dari playlist", nil))
 }

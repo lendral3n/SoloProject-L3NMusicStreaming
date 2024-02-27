@@ -82,7 +82,6 @@ func (repo *playlistQuery) SelectPlaylistsByUser(userIdLogin int) ([]playlist.Co
 	return result, nil
 }
 
-
 // SelectSongsInPlaylist implements playlist.PlaylistDataInterface.
 func (repo *playlistQuery) SelectSongsInPlaylist(ctx context.Context, playlistID int) ([]music.Core, error) {
 	var playlistSongs []PlaylistSong
@@ -102,4 +101,19 @@ func (repo *playlistQuery) SelectSongsInPlaylist(ctx context.Context, playlistID
 	}
 
 	return songs, nil
+}
+
+
+// DeletePlaylist implements playlist.PlaylistDataInterface.
+func (*playlistQuery) DeletePlaylist(playlistID int) error {
+	panic("unimplemented")
+}
+
+// DeleteSongFromPlaylist implements playlist.PlaylistDataInterface.
+func (repo *playlistQuery) DeleteSongFromPlaylist(playlistID int, songID int) error {
+	tx := repo.db.Where("playlist_id = ? AND song_id = ?", playlistID, songID).Delete(&PlaylistSong{})
+    if tx.Error != nil {
+        return tx.Error
+    }
+    return nil
 }
